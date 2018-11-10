@@ -5,5 +5,8 @@
 		"fxcqz"
 	],
 	"copyright": "",
-	"name": "dotty"
+    "name": "dotty",
+    "buildOptions": [
+        "optimize"
+    ]
 }
