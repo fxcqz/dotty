@@ -4,7 +4,13 @@ import config : Config, readConfig;
 import matrix : Matrix;
 import message : Message;
 
+import plugins.core : Core;
+import plugins.utils : callCommands;
+
 void run(ref Matrix connection) {
+    immutable string symbol = connection.getSymbol();
+    Core corePlugin = new Core();
+
     connection.login();
     connection.join();
     connection.setMessageFilter();
@@ -23,8 +29,9 @@ void run(ref Matrix connection) {
         foreach (message; messages) {
             // TODO: pass messageCount to sendMessage, if it's more than
             // one, quote the original message in the reply
-            if (message.text == "hello bot") {
-                connection.sendMessage("YO FROM D");
+            immutable string response = callCommands(symbol, corePlugin, message);
+            if (response.length > 0) {
+                connection.sendMessage(response);
             }
         }
     }

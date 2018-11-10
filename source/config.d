@@ -11,6 +11,7 @@ public:
     string password;
     string address;
     string room;
+    string commandSymbol;
 
     this(JSONValue config) {
         try {
@@ -18,6 +19,7 @@ public:
             this.password = config["password"].str;
             this.address = config["address"].str;
             this.room = config["room"].str;
+            this.commandSymbol = config["commandSymbol"].str;
         } catch (JSONException e) {
             fatal("Could not read the config file!");
             fatal("Message:\n%s", e.msg);
