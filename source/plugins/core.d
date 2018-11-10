@@ -9,11 +9,17 @@ import plugins.utils : command;
 class Core {
 private:
     immutable string[] laughing = ["lol", "lmao", "haha", "heh", "😂"];
+    immutable string[] headsTails = ["heads", "tails"];
 
 public:
     @command
     string hello(const Message message) {
         return "Hello from the plugin system!";
+    }
+
+    @command
+    string ht(const Message message) {
+        return headsTails[uniform(0, headsTails.length)];
     }
 
     string noPrompt(const ref Message message) {
