@@ -5,7 +5,7 @@ import plugins.utils : command;
 
 class Core {
     @command
-    string hello(const ref Message message) {
+    string hello(const Message message) {
         return "Hello from the plugin system!";
     }
 }
