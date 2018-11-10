@@ -17,6 +17,11 @@ class Quote {
         string category = tokens[0];
         string quote = tokens[1 .. $].join(" ");
 
+        if (quote.length == 0) {
+            // must have a quote
+            return "";
+        }
+
         Statement query = db.prepare(
             "INSERT INTO quotes (category, quote) VALUES (:category, :quote)"
         );
@@ -30,14 +35,16 @@ class Quote {
     @command
     string qget(ref Database db, const Message message) {
         string category = message.text.split(" ")[0];
-        auto results = db.execute("SELECT quote FROM quotes WHERE category = '%s'".format(
-            category
-        ));
-
-        // TODO make it random
-        foreach(Row row; results) {
-            return row["quote"].as!string;
+        string result = "Could not find a quote for %s".format(category);
+        auto rows = db.execute(
+            "SELECT quote FROM quotes WHERE category = '%s'
+            ORDER BY random() LIMIT 1".format(category)
+        );
+        foreach (ref Row row; rows) {
+            // again, not that efficient but not really sure what exception
+            // oneValue raises
+            result = row["quote"].as!string;
         }
-        return "";
+        return result;
     }
 }
