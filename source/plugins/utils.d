@@ -14,13 +14,12 @@ string callCommands(T)(string symbol, ref T plugin, const ref Message message) {
     if (!message.text.startsWith(symbol)) {
         return "";
     }
-    string result;
     static foreach (trait; __traits(allMembers, T)) {
         static if (hasUDA!(__traits(getMember, T, trait), command)) {
             if (message.text.startsWith(symbol ~ trait)) {
                 size_t commandLen = (symbol ~ trait).length;
                 // a bit slow maybe?
-                result = mixin("plugin." ~ trait)(message.asCommand(commandLen));
+                string result = mixin("plugin." ~ trait)(message.asCommand(commandLen));
                 if (result.length > 0) {
                     return result;
                 }
