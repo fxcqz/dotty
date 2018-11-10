@@ -56,6 +56,10 @@ public:
         return this.config.commandSymbol;
     }
 
+    string getUserID() {
+        return this.userID;
+    }
+
     void login()
     out {
         assert(this.accessToken.length > 0 && this.userID.length > 0);
