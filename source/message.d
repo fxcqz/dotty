@@ -7,6 +7,6 @@ public:
     string eventID;
 
     Message asCommand(size_t len) const {
-        return Message(text[len .. $], sender, eventID);
+        return Message(text[len + 1 .. $], sender, eventID);
     }
 }

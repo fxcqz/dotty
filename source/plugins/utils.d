@@ -3,12 +3,13 @@ module plugins.utils;
 import std.algorithm.searching : startsWith;
 import std.traits;
 
+import d2sqlite3 : Database;
 import message;
 
 // UDA for direct commands
 struct command {}
 
-string callCommands(T)(string symbol, ref T plugin, const ref Message message) {
+string callCommands(T)(string symbol, ref T plugin, ref Database db, const ref Message message) {
     // assume commands will not collide with each other, so just
     // return a single string
     if (!message.text.startsWith(symbol)) {
@@ -21,7 +22,7 @@ string callCommands(T)(string symbol, ref T plugin, const ref Message message) {
                 if (message.text.startsWith(symbol ~ trait)) {
                     size_t commandLen = (symbol ~ trait).length;
                     // a bit slow maybe?
-                    string result = mixin("plugin." ~ trait)(message.asCommand(commandLen));
+                    string result = mixin("plugin." ~ trait)(db, message.asCommand(commandLen));
                     if (result.length > 0) {
                         return result;
                     }
@@ -32,9 +33,9 @@ string callCommands(T)(string symbol, ref T plugin, const ref Message message) {
     return "";
 }
 
-string callNoPrompt(T)(ref T plugin, const ref Message message) {
+string callNoPrompt(T)(ref T plugin, ref Database db, const ref Message message) {
     static if (__traits(hasMember, T, "noPrompt")) {
-        return plugin.noPrompt(message);
+        return plugin.noPrompt(db, message);
     } else {
         return "";
     }

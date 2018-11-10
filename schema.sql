@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS quote (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    category TEXT,
+    quote TEXT
+);

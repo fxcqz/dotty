@@ -8,5 +8,8 @@
     "name": "dotty",
     "buildOptions": [
         "optimize"
-    ]
+    ],
+    "dependencies": {
+        "d2sqlite3": "~>0.17.1"
+    }
 }

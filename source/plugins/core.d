@@ -3,6 +3,7 @@ module plugins.core;
 import std.algorithm.searching : canFind;
 import std.random : choice, uniform;
 
+import d2sqlite3 : Database;
 import message : Message;
 import plugins.utils : command;
 
@@ -13,16 +14,16 @@ private:
 
 public:
     @command
-    string hello(const Message message) {
+    string hello(ref Database db, const Message message) {
         return "Hello from the plugin system!";
     }
 
     @command
-    string ht(const Message message) {
+    string ht(ref Database db, const Message message) {
         return headsTails[uniform(0, headsTails.length)];
     }
 
-    string noPrompt(const ref Message message) {
+    string noPrompt(ref Database db, const ref Message message) {
         foreach(laughStr; laughing) {
             if (message.text.canFind(laughStr) && uniform(0, 3) == 2) {
                 // 25% probability

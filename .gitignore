@@ -16,3 +16,4 @@ dotty
 dub.selections.json
 config.json
 .vscode/
+dotty.db

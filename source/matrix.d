@@ -8,6 +8,7 @@ import std.string : toLower, translate;
 import core.stdc.stdlib : exit;
 
 import config : Config;
+import d2sqlite3 : Database;
 import message : Message;
 
 static immutable string[string] NULL_PARAMS;
@@ -48,8 +49,11 @@ private:
     }
 
 public:
-    this(Config config) {
+    Database db;
+
+    this(Config config, ref Database db) {
         this.config = config;
+        this.db = db;
     }
 
     string getSymbol() {

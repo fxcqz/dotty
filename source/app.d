@@ -3,16 +3,18 @@ import std.stdio : writeln;
 import std.typecons : tuple;
 
 import config : Config, readConfig;
+import db : makeDB;
 import matrix : Matrix;
 import message : Message;
 
 import plugins.core : Core;
+import plugins.quote : Quote;
 import plugins.utils : callCommands, callNoPrompt;
 
 
 void run(ref Matrix connection) {
     immutable string symbol = connection.getSymbol();
-    auto plugins = tuple(new Core());
+    auto plugins = tuple(new Core(), new Quote());
 
     connection.login();
     connection.join();
@@ -39,13 +41,13 @@ void run(ref Matrix connection) {
             // one, quote the original message in the reply
 
             foreach(ref plugin; plugins) {
-                string response = callCommands(symbol, plugin, message);
+                string response = callCommands(symbol, plugin, connection.db, message);
                 if (response.length > 0) {
                     connection.sendMessage(response);
                 }
 
                 // run generic command
-                response = callNoPrompt(plugin, message);
+                response = callNoPrompt(plugin, connection.db, message);
                 if (response.length > 0) {
                     connection.sendMessage(response);
                 }
@@ -55,7 +57,8 @@ void run(ref Matrix connection) {
 }
 
 void main() {
+    auto db = makeDB();
     Config config = new Config(readConfig("config.json"));
-    Matrix connection = new Matrix(config);
+    Matrix connection = new Matrix(config, db);
     run(connection);
 }
