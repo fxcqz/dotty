@@ -44,14 +44,37 @@ class Quote {
     string qget(ref Database db, const Message message) {
         string category = message.text;
         string result = "Could not find a quote for: %s".format(category);
-        auto rows = db.execute(
-            "SELECT quote FROM quotes WHERE category = '%s'
-            ORDER BY random() LIMIT 1".format(category)
-        );
+        string query = "SELECT quote FROM quotes";
+
+        if (message.text.length != 0) {
+            query ~= " WHERE category = '%s'".format(category);
+        }
+        query ~= " ORDER BY random() LIMIT 1";
+
+        auto rows = db.execute(query);
         foreach (ref Row row; rows) {
             // again, not that efficient but not really sure what exception
             // oneValue raises
             result = row["quote"].as!string;
+        }
+        return result;
+    }
+
+    @command
+    string qfind(ref Database db, const Message message) {
+        if (message.text.length == 0) {
+            return "";
+        }
+
+        string term = message.text;
+        string result = "No quote found for search term: %s".format(term);
+        auto rows = db.execute(
+            "SELECT category, quote FROM quotes WHERE quote LIKE '%%%s%%'
+            ORDER BY random() LIMIT 1".format(term)
+        );
+        foreach (ref Row row; rows) {
+            result = "(%s): %s".format(row["category"].as!string,
+                                       row["quote"].as!string);
         }
         return result;
     }
