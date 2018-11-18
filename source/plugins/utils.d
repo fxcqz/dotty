@@ -16,15 +16,17 @@ string callCommands(T)(string symbol, ref T plugin, ref Database db, const ref M
         return "";
     }
     static foreach (trait; __traits(allMembers, T)) {
-        // use typeof work around because we are only interested in public members
         static if (is(typeof(__traits(getMember, T.init, trait)))) {
-            static if (hasUDA!(__traits(getMember, T, trait), command)) {
-                if (message.text.startsWith(symbol ~ trait)) {
-                    size_t commandLen = (symbol ~ trait).length;
-                    // a bit slow maybe?
-                    string result = mixin("plugin." ~ trait)(db, message.asCommand(commandLen));
-                    if (result.length > 0) {
-                        return result;
+            // we are only interested in public members
+            static if (__traits(getProtection, __traits(getMember, T.init, trait)) == "public") {
+                static if (hasUDA!(__traits(getMember, T, trait), command)) {
+                    if (message.text.startsWith(symbol ~ trait)) {
+                        size_t commandLen = (symbol ~ trait).length;
+                        // a bit slow maybe?
+                        string result = mixin("plugin." ~ trait)(db, message.asCommand(commandLen));
+                        if (result.length > 0) {
+                            return result;
+                        }
                     }
                 }
             }
