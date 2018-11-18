@@ -1,5 +1,7 @@
 module message;
 
+import std.string : strip;
+
 public struct Message {
 public:
     string text;
@@ -10,6 +12,6 @@ public:
         if (len >= text.length) {
             return Message("", sender, eventID);
         }
-        return Message(text[len + 1 .. $], sender, eventID);
+        return Message(text[len + 1 .. $].strip, sender, eventID);
     }
 }
