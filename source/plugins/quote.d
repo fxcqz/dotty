@@ -42,8 +42,8 @@ class Quote {
 
     @command
     string qget(ref Database db, const Message message) {
-        string category = message.text.split(" ")[0];
-        string result = "Could not find a quote for %s".format(category);
+        string category = message.text;
+        string result = "Could not find a quote for: %s".format(category);
         auto rows = db.execute(
             "SELECT quote FROM quotes WHERE category = '%s'
             ORDER BY random() LIMIT 1".format(category)
