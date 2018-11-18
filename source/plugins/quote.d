@@ -11,15 +11,23 @@ import plugins.utils : command;
 // http://biozic.github.io/d2sqlite3/d2sqlite3.html
 
 class Quote {
+    private immutable string ADD_FAILURE = "Failed to add quote";
+    private immutable string ADD_SUCCESS = "Added quote to the category: %s";
+
     @command
     string qadd(ref Database db, const Message message) {
         string[] tokens = message.text.split(" ");
+
+        if (tokens.length < 2) {
+            return ADD_FAILURE;
+        }
+
         string category = tokens[0];
         string quote = tokens[1 .. $].join(" ");
 
         if (quote.length == 0) {
             // must have a quote
-            return "";
+            return ADD_FAILURE;
         }
 
         Statement query = db.prepare(
@@ -29,7 +37,7 @@ class Quote {
         query.bind(":quote", quote);
         query.execute();
         query.reset();
-        return "";
+        return ADD_SUCCESS.format(category);
     }
 
     @command
