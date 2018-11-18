@@ -27,6 +27,7 @@ void run(ref Matrix connection) {
         JSONValue data = connection.sync();
         Message[] messages = connection.extractMessages(data);
         immutable size_t messageCount = messages.length;
+
         if (messageCount == 0) {
             continue;
         }
@@ -38,19 +39,21 @@ void run(ref Matrix connection) {
                 continue;
             }
 
-            // TODO: pass messageCount to sendMessage, if it's more than
-            // one, quote the original message in the reply
+            string quote;
+            if (messageCount > 1) {
+                quote = message.text;
+            }
 
             foreach(ref plugin; plugins) {
                 string response = callCommands(symbol, plugin, connection.db, message);
                 if (response.length > 0) {
-                    connection.sendMessage(response);
+                    connection.sendMessage(response, "m.text", quote);
                 }
 
                 // run generic command
                 response = callNoPrompt(plugin, connection.db, message);
                 if (response.length > 0) {
-                    connection.sendMessage(response);
+                    connection.sendMessage(response, "m.text", quote);
                 }
             }
         }

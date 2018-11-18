@@ -162,12 +162,22 @@ public:
         post(url, data);
     }
 
-    void sendMessage(string message, string type = "m.text") {
+    void sendMessage(string message, string type = "m.text", string quoteText = "") {
         string url = this.buildUrl("rooms/%s/send/m.room.message/%d".format(this.roomID, this.txID));
-        string data = `{
-            "body": "%s",
-            "msgtype": "%s"
-        }`.format(message, type);
+        string data;
+        if (quoteText.length > 0) {
+            data = `{
+                "body": "> %s\n\n%s",
+                "msgtype": "%s",
+                "format": "org.matrix.custom.html",
+                "formatted_body": "<blockquote>\n<p>%s</p>\n</blockquote>\n<p>%s</p>\n"
+            }`.format(quoteText, message, type, quoteText, message);
+        } else {
+            data = `{
+                "body": "%s",
+                "msgtype": "%s"
+            }`.format(message, type);
+        }
         put(url, data);
         this.txID += 1;
     }
