@@ -9,7 +9,12 @@ import plugins.utils : command;
 
 class Rate {
     @command
-    string rate(ref Database db, const Message message) {
-        return "%d / 10".format(uniform(0, 10));
+    string rate(ref Database db, const Message message, int limit = 10) {
+        return "%d / %d".format(uniform(0, limit), limit);
+    }
+
+    @command
+    string r8(ref Database db, const Message message) {
+        return rate(db, message, 8);
     }
 }
