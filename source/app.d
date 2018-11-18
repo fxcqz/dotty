@@ -8,13 +8,14 @@ import matrix : Matrix;
 import message : Message;
 
 import plugins.core : Core;
+import plugins.rate : Rate;
 import plugins.quote : Quote;
 import plugins.utils : callCommands, callNoPrompt;
 
 
 void run(ref Matrix connection) {
     immutable string symbol = connection.getSymbol();
-    auto plugins = tuple(new Core(), new Quote());
+    auto plugins = tuple(new Core(), new Quote(), new Rate());
 
     connection.login();
     connection.join();
