@@ -3,7 +3,7 @@ module matrix;
 import std.experimental.logger : info, warning, fatal;
 import std.format : format;
 import std.json : parseJSON, JSONValue, JSONException;
-import std.net.curl : get, post, put;
+import std.net.curl : CurlException, get, post, put;
 import std.string : toLower, translate;
 import core.stdc.stdlib : exit;
 
@@ -127,7 +127,7 @@ public:
                 foreach (event; events.array) {
                     if ("body" in event["content"]) {
                         result ~= Message(event["content"]["body"].str.toLower,
-                                        event["sender"].str, event["event_id"].str);
+                                          event["sender"].str, event["event_id"].str);
                     }
                 }
             }
@@ -150,6 +150,9 @@ public:
         } catch (JSONException e) {
             warning("WARNING: Sync failed");
             return `{}`.parseJSON;
+        } catch (CurlException e) {
+            warning("WARNING: Sync failed due to bad connection, ignoring.");
+            return `{}`.parseJSON;
         }
     }
 
@@ -159,7 +162,11 @@ public:
             "m.read": "%s"
         }`.format(message.eventID, message.eventID);
         string url = this.buildUrl("rooms/%s/read_markers".format(this.roomID));
-        post(url, data);
+        try {
+            post(url, data);
+        } catch (CurlException e) {
+            warning("WARNING: could not mark read due to a connection error.");
+        }
     }
 
     void sendMessage(string message, string type = "m.text", string quoteText = "") {
@@ -178,7 +185,11 @@ public:
                 "msgtype": "%s"
             }`.format(message, type);
         }
-        put(url, data);
+        try {
+            put(url, data);
+        } catch (CurlException e) {
+            warning("WARNING: Failed to send message due to connection error.");
+        }
         this.txID += 1;
     }
 }
