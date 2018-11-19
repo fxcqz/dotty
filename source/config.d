@@ -4,6 +4,7 @@ import core.stdc.stdlib : exit;
 import std.experimental.logger : fatal;
 import std.file : readText;
 import std.json : JSONException, JSONValue, parseJSON;
+import std.string : stripLeft;
 
 class Config {
 public:
@@ -25,6 +26,10 @@ public:
             fatal("Message:\n%s", e.msg);
             exit(-1);
         }
+    }
+
+    string serverName() {
+        return this.address.stripLeft("https://");
     }
 }
 

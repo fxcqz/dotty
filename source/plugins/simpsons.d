@@ -17,7 +17,7 @@ class Simpsons {
             JSONValue[] data = parseJSON(
                 get("https://frinkiac.com/api/search?q=%s".format(term))).array;
             JSONValue clip = data[uniform(0, data.length)];
-            return "https://frinkiac.com/img/%s/%d.jpg".format(
+            return "!!image https://frinkiac.com/img/%s/%d.jpg".format(
                 clip["Episode"].str, clip["Timestamp"].integer
             );
         } catch (JSONException e) {

@@ -1,9 +1,10 @@
 module matrix;
 
 import std.experimental.logger : info, warning, fatal;
+import std.file : read;
 import std.format : format;
 import std.json : parseJSON, JSONValue, JSONException;
-import std.net.curl : CurlException, get, post, put;
+import std.net.curl : CurlException, download, get, post, put;
 import std.string : toLower, translate;
 import core.stdc.stdlib : exit;
 
@@ -30,9 +31,10 @@ private:
         return result[0 .. $ - 1];
     }
 
-    string buildUrl(string endpoint,
-            const string[string] params = NULL_PARAMS, string apiVersion = "unstable") {
-        string url = "%s/_matrix/client/%s/%s".format(this.config.address, apiVersion, endpoint);
+    string buildUrl(string endpoint, const string[string] params = NULL_PARAMS,
+                    string apiVersion = "unstable", string section = "client") {
+        string url = "%s/_matrix/%s/%s/%s".format(this.config.address, section,
+                                                  apiVersion, endpoint);
         char concat = '?';
 
         if (this.accessToken.length) {
@@ -187,9 +189,41 @@ public:
         }
         try {
             put(url, data);
+            this.txID += 1;
         } catch (CurlException e) {
             warning("WARNING: Failed to send message due to connection error.");
         }
-        this.txID += 1;
+    }
+
+    private string uploadImage(const ubyte[] data) {
+        string[string] params = ["filename" : "goudaimg.jpg"];
+        string url = this.buildUrl("upload", params, "v1", "media");
+        try {
+            JSONValue response = parseJSON(post(url, data));
+            return response["content_uri"].str;
+        } catch (CurlException e) {
+            warning("WARNING: Failed to upload Image");
+        }
+        return "";
+    }
+
+    void sendImage(string message) {
+        download(message, "/tmp/file.jpg");
+        auto content = (cast(const(ubyte)[]) read("/tmp/file.jpg"));
+        string mediaUrl = this.uploadImage(content);
+        if (mediaUrl.length != 0) {
+            string url = this.buildUrl("rooms/%s/send/m.room.message/%d".format(this.roomID, this.txID));
+            string data = `{
+                "body": "goudaimg.jpg",
+                "msgtype": "m.image",
+                "url": "%s"
+            }`.format(mediaUrl);
+            try {
+                put(url, data);
+                this.txID += 1;
+            } catch (CurlException e) {
+                warning("WARNING: Failed to send image due to connection error.");
+            }
+        }
     }
 }

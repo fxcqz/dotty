@@ -1,5 +1,7 @@
+import std.algorithm.searching : startsWith;
 import std.json : JSONValue;
 import std.stdio : writeln;
+import std.string : stripLeft;
 import std.typecons : tuple;
 
 import config : Config, readConfig;
@@ -49,7 +51,11 @@ void run(ref Matrix connection) {
             foreach(ref plugin; plugins) {
                 string response = callCommands(symbol, plugin, connection.db, message);
                 if (response.length > 0) {
-                    connection.sendMessage(response, "m.text", quote);
+                    if (response.startsWith("!!image ")) {
+                        connection.sendImage(response.stripLeft("!!image "));
+                    } else {
+                        connection.sendMessage(response, "m.text", quote);
+                    }
                 }
 
                 // run generic command
