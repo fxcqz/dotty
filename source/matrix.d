@@ -213,6 +213,8 @@ public:
     }
 
     void sendImage(string message) {
+        // NOTE this is linux only
+        // TODO add a os agnostic way to write to tmp dir
         download(message, "/tmp/file.jpg");
         auto content = (cast(const(ubyte)[]) read("/tmp/file.jpg"));
         string mediaUrl = this.uploadImage(content);
