@@ -4,7 +4,7 @@ import std.experimental.logger : info, warning, fatal;
 import std.file : read;
 import std.format : format;
 import std.json : parseJSON, JSONValue, JSONException;
-import std.net.curl : CurlException, download, get, post, put;
+import std.net.curl : CurlException, download, get, HTTP, post, put;
 import std.string : toLower, translate;
 import core.stdc.stdlib : exit;
 
@@ -19,6 +19,7 @@ private:
     Config config;
     string userID, roomID, accessToken, nextBatch, filterID;
     int txID;
+    HTTP httpClient;
 
     string makeParamString(const string[string] params, char concat) {
         if (params.length == 0) {
@@ -56,6 +57,10 @@ public:
     this(Config config, ref Database db) {
         this.config = config;
         this.db = db;
+        this.httpClient = HTTP();
+        // TODO only handles jpegs atm, this will need to change if other
+        // image plugins are added
+        this.httpClient.addRequestHeader("Content-Type", "image/jpeg");
     }
 
     string getSymbol() {
@@ -197,9 +202,9 @@ public:
 
     private string uploadImage(const ubyte[] data) {
         string[string] params = ["filename" : "goudaimg.jpg"];
-        string url = this.buildUrl("upload", params, "v1", "media");
+        string url = this.buildUrl("upload", params, "r0", "media");
         try {
-            JSONValue response = parseJSON(post(url, data));
+            JSONValue response = parseJSON(post(url, data, this.httpClient));
             return response["content_uri"].str;
         } catch (CurlException e) {
             warning("WARNING: Failed to upload Image");
