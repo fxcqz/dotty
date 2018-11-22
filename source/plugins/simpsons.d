@@ -4,6 +4,7 @@ import std.format : format;
 import std.json : JSONException, JSONValue, parseJSON;
 import std.net.curl : CurlException, get;
 import std.random : uniform;
+import std.uri : encode;
 
 import d2sqlite3 : Database;
 import message : Message;
@@ -24,7 +25,7 @@ class Simpsons {
         }
 
         try {
-            auto result = parseJSON(get(url));
+            auto result = parseJSON(get(url.encode));
             JSONValue clip;
             if (isRandom) {
                 // extract a single result from the random api
