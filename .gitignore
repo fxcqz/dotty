@@ -17,3 +17,5 @@ dub.selections.json
 config.json
 .vscode/
 dotty.db
+libbash.a
+source/plugins/bash
