@@ -1,6 +1,6 @@
 module plugins.log;
 
-import std.algorithm.searching : canFind;
+import std.algorithm.searching : canFind, startsWith;
 import std.experimental.logger : info;
 
 import d2sqlite3 : Statement;
@@ -14,7 +14,9 @@ public:
   string noPrompt(ref Matrix connection, const ref Message message) {
     import std.stdio : writeln;
     // only log messages from users we care about - see config.json
-    if (!connection.config.logIgnore.canFind(message.sender)) {
+    // also, don't log explicit commands
+    if (!connection.config.logIgnore.canFind(message.sender) &&
+        !message.text.startsWith(connection.getSymbol())) {
       Statement query = connection.db.prepare(
           "INSERT INTO messages (sender, room, message) VALUES (:sender, :room, :message)"
       );
