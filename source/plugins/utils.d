@@ -6,6 +6,8 @@ import std.traits;
 import d2sqlite3 : Database;
 import message;
 
+import matrix : Matrix;
+
 // UDA for direct commands
 struct command {}
 
@@ -35,9 +37,9 @@ string callCommands(T)(string symbol, ref T plugin, ref Database db, const ref M
     return "";
 }
 
-string callNoPrompt(T)(ref T plugin, ref Database db, const ref Message message) {
+string callNoPrompt(T)(ref T plugin, ref Matrix conn, const ref Message message) {
     static if (__traits(hasMember, T, "noPrompt")) {
-        return plugin.noPrompt(db, message);
+        return plugin.noPrompt(conn, message);
     } else {
         return "";
     }

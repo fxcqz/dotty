@@ -5,6 +5,8 @@ import std.random : choice, uniform;
 
 import d2sqlite3 : Database;
 import message : Message;
+
+import matrix : Matrix;
 import plugins.utils : command;
 
 class Core {
@@ -23,7 +25,7 @@ public:
         return headsTails[uniform(0, headsTails.length)];
     }
 
-    string noPrompt(ref Database db, const ref Message message) {
+    string noPrompt(ref Matrix connection, const ref Message message) {
         foreach(laughStr; laughing) {
             if (message.text.canFind(laughStr) && uniform(0, 3) == 2) {
                 // 25% probability

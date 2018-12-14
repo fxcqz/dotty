@@ -12,6 +12,7 @@ import message : Message;
 import plugins.bash : Bash;
 import plugins.core : Core;
 import plugins.futurama : Futurama;
+import plugins.log : Log;
 import plugins.rate : Rate;
 import plugins.simpsons : Simpsons;
 import plugins.quote : Quote;
@@ -24,9 +25,8 @@ extern(C) {
 
 void run(ref Matrix connection) {
     immutable string symbol = connection.getSymbol();
-    auto plugins = tuple(new Core(), new Quote(), new Rate(),
-                         new Simpsons(), new Futurama(),
-                         new Bash());
+    auto plugins = tuple(new Log(), new Core(), new Quote(), new Rate(),
+                         new Simpsons(), new Futurama(), new Bash());
 
     connection.login();
     connection.join();
@@ -66,7 +66,8 @@ void run(ref Matrix connection) {
                 }
 
                 // run generic command
-                response = callNoPrompt(plugin, connection.db, message);
+                // these are more generic so pass in the Matrix connection instance
+                response = callNoPrompt(plugin, connection, message);
                 if (response.length > 0) {
                     connection.sendMessage(response, "m.text", quote);
                 }

@@ -3,5 +3,6 @@
     "password": "",
     "address": "https://matrix.org",
     "room": "#example:matrix.org",
-    "commandSymbol": "%"
+    "commandSymbol": "%",
+    "logIgnore": []
 }

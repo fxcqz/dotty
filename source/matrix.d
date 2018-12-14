@@ -16,7 +16,6 @@ static immutable string[string] NULL_PARAMS;
 
 class Matrix {
 private:
-    Config config;
     string userID, roomID, accessToken, nextBatch, filterID;
     int txID;
     HTTP httpClient;
@@ -52,6 +51,7 @@ private:
     }
 
 public:
+    Config config;
     Database db;
 
     this(Config config, ref Database db) {

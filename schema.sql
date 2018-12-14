@@ -3,3 +3,9 @@ CREATE TABLE IF NOT EXISTS quotes (
     category TEXT,
     quote TEXT
 );
+
+CREATE TABLE IF NOT EXISTS messages (
+  sender TEXT,
+  room TEXT,
+  message TEXT
+);

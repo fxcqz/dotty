@@ -5,6 +5,9 @@ import std.experimental.logger : fatal;
 import std.file : readText;
 import std.json : JSONException, JSONValue, parseJSON;
 import std.string : stripLeft;
+import std.conv : to;
+import std.algorithm : map;
+import std.array : array;
 
 class Config {
 public:
@@ -13,6 +16,7 @@ public:
     string address;
     string room;
     string commandSymbol;
+    string[] logIgnore;
 
     this(JSONValue config) {
         try {
@@ -21,6 +25,7 @@ public:
             this.address = config["address"].str;
             this.room = config["room"].str;
             this.commandSymbol = config["commandSymbol"].str;
+            this.logIgnore = config["logIgnore"].array.map!(s => s.str).array;
         } catch (JSONException e) {
             fatal("Could not read the config file!");
             fatal("Message:\n%s", e.msg);
