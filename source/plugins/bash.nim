@@ -15,7 +15,6 @@ proc nimBash(message: cstring): cstring {.exportc.} =
   result = "".cstring
   var client = newHttpClient()
   let
-    target: int = rand(950_000)
     url: string = &"http://bash.org/?random1"
     response = client.getContent(url)
     html = parseHTML(response)
