@@ -1,3 +1,6 @@
+import core.time : dur;
+import core.thread : Thread;
+
 import std.algorithm.searching : startsWith;
 import std.json : JSONValue;
 import std.stdio : writeln;
@@ -24,6 +27,7 @@ extern(C) {
 }
 
 void run(ref Matrix connection) {
+    int waitDur = 0, iters = 0;
     immutable string symbol = connection.getSymbol();
     auto plugins = tuple(new Log(), new Core(), new Quote(), new Rate(),
                          new Simpsons(), new Futurama(), new Bash());
@@ -40,8 +44,25 @@ void run(ref Matrix connection) {
         immutable size_t messageCount = messages.length;
 
         if (messageCount == 0) {
+            // cap the wait duration at 5 secs
+            if (waitDur < 5) {
+                iters += 1;
+
+                if (iters >= 500) {
+                    // 500 is an arbitrary amount but should generally take a
+                    // while to build up to in an active conversation
+                    waitDur += 1;
+                    iters = 0;
+                }
+            }
+
+            Thread.sleep(dur!"seconds"(waitDur));
             continue;
         }
+
+        // reset sleep duration vars
+        iters = 0;
+        waitDur = 0;
 
         connection.markRead(messages[$ - 1]);
         foreach (ref message; messages) {
