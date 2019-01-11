@@ -17,6 +17,33 @@ string getThinkingString() {
     return "";
 }
 
+string[] wordNums = [
+    "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"
+];
+
+string[] quantities = [
+    "hundred", "thousand", "million", "billion"
+];
+
+string getQuantityString() {
+    string result;
+    int option = uniform!"[]"(0, 2);
+    switch (option) {
+        case 0:
+            result = "%d".format(uniform(0, 99));
+            break;
+        case 1:
+            result = "%s %s".format(wordNums.choice, quantities.choice);
+            break;
+        case 2:
+            result = "%s hundred %s".format(wordNums.choice, quantities[1 .. $].choice);
+            break;
+        default:
+            break;
+    }
+    return result;
+}
+
 string[] unsure = [
     "I'm not sure", "I don't know", "dunno", "who knows"
 ];

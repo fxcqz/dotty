@@ -11,7 +11,7 @@ import d2sqlite3 : Database;
 import message : Message;
 
 import matrix : Matrix;
-import plugins.constants : getFrequencyString, getThinkingString, getUnsureString;
+import plugins.constants : getFrequencyString, getQuantityString, getUnsureString;
 import plugins.utils : command;
 
 class Core {
@@ -36,7 +36,7 @@ public:
         string response = "";
         switch (sentence[0]) {
         case "many": case "much":
-            response = "%s%d".format(getThinkingString(), uniform(0, 100));
+            response = getQuantityString();
             break;
         case "are": case "do":
             response = getUnsureString();
