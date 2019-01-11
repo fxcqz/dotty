@@ -77,7 +77,7 @@ public:
     }
 
     string or(string text) {
-        if (!text.canFind("or")) {
+        if (!text.canFind(" or ")) {
             return "";
         }
         auto words = text.split!isWhite;
@@ -87,16 +87,10 @@ public:
         if (this.pronouns.canFind(words[0])) {
             words = words[1 .. $];
         }
-        if (auto choices = split(words.join(" "), "or")) {
+        if (auto choices = split(words.join(" "), " or ")) {
             return choices.choice.strip.strip("?").replace("myself", "yourself");
         }
         return "";
-    }
-
-    unittest {
-        import std.stdio : writeln;
-        auto cls = new Core;
-        writeln(cls.or("hello or bye"));
     }
 
     string noPrompt(ref Matrix connection, const ref Message message) {
