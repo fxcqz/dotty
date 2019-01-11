@@ -1,5 +1,6 @@
 module plugins.core;
 
+import std.array : join, replace;
 import std.algorithm.searching : canFind, findSplitAfter;
 import std.conv : to;
 import std.format : format;
@@ -18,6 +19,14 @@ class Core {
 private:
     immutable string[] laughing = ["lol", "lmao", "haha", "heh", "😂"];
     immutable string[] headsTails = ["heads", "tails"];
+    immutable string[] modals = [
+        "can", "could", "may", "might", "shall", "should", "will", "would",
+        "must", "ought", "are", "am", "is", "does", "did", "didn't", "do",
+        "don't", "dont", "was", "didnt"
+    ];
+    immutable string[] pronouns = [
+        "i", "you", "me", "they", "he", "she", "it"
+    ];
 
 public:
     @command
@@ -67,10 +76,38 @@ public:
         return "";
     }
 
+    string or(string text) {
+        if (!text.canFind("or")) {
+            return "";
+        }
+        auto words = text.split!isWhite;
+        if (this.modals.canFind(words[0])) {
+            words = words[1 .. $];
+        }
+        if (this.pronouns.canFind(words[0])) {
+            words = words[1 .. $];
+        }
+        if (auto choices = split(words.join(" "), "or")) {
+            return choices.choice.strip.strip("?").replace("myself", "yourself");
+        }
+        return "";
+    }
+
+    unittest {
+        import std.stdio : writeln;
+        auto cls = new Core;
+        writeln(cls.or("hello or bye"));
+    }
+
     string noPrompt(ref Matrix connection, const ref Message message) {
         string howResponse = how(message.text);
         if (howResponse.length) {
             return howResponse;
+        }
+
+        string orResponse = or(message.text);
+        if (orResponse.length) {
+            return orResponse;
         }
 
         // calculate the whether we're going to laugh before doing any looping
