@@ -60,8 +60,8 @@ public:
     }
 
     string how(string text) {
-        // processing for sentences containing "how"
-        if (!text.canFind("how")) {
+        import std.algorithm.searching : endsWith;
+        if (!text.canFind("how") || !text.endsWith("?")) {
             return "";
         }
 
@@ -77,7 +77,8 @@ public:
     }
 
     string or(string text) {
-        if (!text.canFind(" or ")) {
+        import std.algorithm.searching : endsWith;
+        if (!text.canFind(" or ") || !text.endsWith("?")) {
             return "";
         }
         auto words = text.split!isWhite;
@@ -88,7 +89,7 @@ public:
             words = words[1 .. $];
         }
         if (auto choices = split(words.join(" "), " or ")) {
-            return choices.choice.strip.strip("?").replace("myself", "yourself");
+            return choices.choice.strip.strip("?").replace(" myself", " yourself").replace(" me", " you").replace(" my", " your").replace(" our", " your");
         }
         return "";
     }
