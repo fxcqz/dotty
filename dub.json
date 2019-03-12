@@ -13,6 +13,6 @@
         "d2sqlite3": "~>0.17.1"
     },
     "sourceFiles": [
-      "libbash.a"
+      "libnimplug.a"
     ]
 }

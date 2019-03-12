@@ -19,3 +19,4 @@ config.json
 dotty.db
 libbash.a
 source/plugins/bash
+libnimplug.a
