@@ -7,11 +7,6 @@ import strutils
 import xmltree
 
 proc nimBash*(message: cstring): cstring {.exportc.} =
-  # call randomize each time because not sure about
-  # impact of global randomize when doing ffi, if more plugins
-  # need rng then can look into it at that point
-  randomize()
-  # there are roughly 950k quotes on bash.org
   result = "".cstring
   var client = newHttpClient()
   let
