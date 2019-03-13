@@ -6,12 +6,13 @@ import strtabs
 import strutils
 import xmltree
 
+import nimutils
+
 proc nimBash*(message: cstring): cstring {.exportc.} =
   result = "".cstring
-  var client = newHttpClient()
   let
     url: string = &"http://bash.org/?random1"
-    response = client.getContent(url)
+    response = Client.getContent(url)
     html = parseHTML(response)
   var quotes: seq[string] = @[]
 
