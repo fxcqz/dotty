@@ -16,4 +16,9 @@ class Baga {
   string baga(ref Database db, const Message message) {
     return to!string(nimBaga(message.text.toStringz));
   }
+
+  @command
+  string bhaga(ref Database db, const Message message) {
+    return to!string(nimBaga(message.text.toStringz));
+  }
 }
