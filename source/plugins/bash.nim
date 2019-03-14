@@ -11,8 +11,9 @@ import nimutils
 proc nimBash*(message: cstring): cstring {.exportc.} =
   result = "".cstring
   let
+    client = newHttpClient()
     url: string = &"http://bash.org/?random1"
-    response = Client.getContent(url)
+    response = client.getContent(url)
     html = parseHTML(response)
   var quotes: seq[string] = @[]
 

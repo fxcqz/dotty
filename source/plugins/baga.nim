@@ -6,8 +6,6 @@ import strtabs
 import strutils
 import xmltree
 
-import nimutils
-
 
 let baseUrl: string = "https://www.holy-bhagavad-gita.org"
 
@@ -23,9 +21,10 @@ proc getQuote(response: string): string =
 
 proc randomQuote(): string =
   let
+    client = newHttpClient()
     chapter = (1..18).rand
     url: string = &"{baseUrl}/chapter/{chapter}"
-    response = Client.getContent(url)
+    response = client.getContent(url)
     html = parseHTML(response)
 
   var verses: seq[string] = @[]
@@ -33,11 +32,13 @@ proc randomQuote(): string =
     if "verse" in a.attrs["href"]:
       verses.add(a.attrs["href"])
 
-  let response2 = Client.getContent(&"{baseUrl}{verses.rand}")
+  let response2 = client.getContent(&"{baseUrl}{verses.rand}")
   return getQuote(response2)
 
 proc specificQuote(text: string): string =
-  let parts = text.split(".")
+  let
+    parts = text.split(".")
+    client = newHttpClient()
   var
     chapter: int
     verse: int
@@ -51,7 +52,7 @@ proc specificQuote(text: string): string =
   try:
     let
       url = &"{baseUrl}/chapter/{chapter}/verse/{verse}"
-      response = Client.getContent(url)
+      response = client.getContent(url)
     return getQuote(response)
   except:
     return "That's not a real chapter or verse"
