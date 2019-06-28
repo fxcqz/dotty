@@ -41,14 +41,17 @@ class Reddit {
         }
 
         string content;
+        string content_url = post["url"].str;
         if (post["selftext"].str == "") {
-          content = post["url"].str;
+          content = content_url;
         } else {
           content = post["selftext"].str;
         }
 
-        if (post["whitelist_status"].str.canFind("nsfw")) {
+        if (post["over_18"].boolean) {
           content ~= " (nsfw)";
+        } else if (content_url.canFind("jpg") || content_url.canFind("png")) {
+          return "!!image %s".format(content_url);
         }
 
         return content;
