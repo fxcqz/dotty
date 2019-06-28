@@ -18,6 +18,7 @@ import plugins.core : Core;
 import plugins.futurama : Futurama;
 import plugins.log : Log;
 import plugins.rate : Rate;
+import plugins.reddit : Reddit;
 import plugins.simpsons : Simpsons;
 import plugins.quote : Quote;
 import plugins.utils : callCommands, callNoPrompt;
@@ -32,7 +33,7 @@ void run(ref Matrix connection) {
     immutable string symbol = connection.getSymbol();
     auto plugins = tuple(new Log(), new Core(), new Quote(), new Rate(),
                          new Simpsons(), new Futurama(), new Bash(),
-                         new Baga());
+                         new Baga(), new Reddit());
 
     connection.login();
     connection.join();

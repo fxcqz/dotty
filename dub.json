@@ -10,7 +10,7 @@
         "optimize"
     ],
     "dependencies": {
-        "d2sqlite3": "~>0.17.1"
+        "d2sqlite3": "~>0.18.2"
     },
     "sourceFiles": [
       "libnimplug.a"
