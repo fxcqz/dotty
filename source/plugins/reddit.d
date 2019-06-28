@@ -39,7 +39,7 @@ class Reddit {
       auto result = parseJSON(get(url, http));
       JSONValue[] data = result["data"]["children"].array;
 
-      if (data.length == 0) {
+      if (data.length == 0 && t == "") {
         return reddit(db, message, "all");
       }
 
