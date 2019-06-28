@@ -40,7 +40,12 @@ class Reddit {
       JSONValue[] data = result["data"]["children"].array;
 
       if (data.length == 0 && t == "") {
-        return reddit(db, message, "all");
+        if (t == "") {
+          // try top posts of all time
+          return reddit(db, message, "all");
+        } else {
+          return "";
+        }
       }
 
       while (true) {
