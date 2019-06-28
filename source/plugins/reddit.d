@@ -2,8 +2,9 @@ module plugins.reddit;
 
 import std.format : format;
 import std.json : JSONException, JSONValue, parseJSON;
-import std.net.curl : CurlException, get;
-import std.random : uniform;
+import std.net.curl : CurlException, get, HTTP;
+import std.random : choice, uniform;
+import std.experimental.logger : warning;
 
 import d2sqlite3 : Database;
 import message : Message;
@@ -13,7 +14,8 @@ class Reddit {
   @command
   string reddit(ref Database db, const Message message) {
     import std.algorithm : canFind;
-    import std.array : split;
+    import std.array : join, split;
+    import std.range : generate, take;
     import std.stdio : writeln;
     import std.uni : isWhite;
 
@@ -24,8 +26,13 @@ class Reddit {
 
     string url = "https://reddit.com/r/%s.json".format(subreddit);
 
+    auto http = HTTP(url);
+    string extra = generate(
+        () => "abcdefghijklmnopqrstuvwxyz".split("").choice).take(8).join;
+    http.setUserAgent("a %s man".format(extra));
+
     try {
-      auto result = parseJSON(get(url));
+      auto result = parseJSON(get(url, http));
       JSONValue[] data = result["data"]["children"].array;
       while (true) {
         auto post = data[uniform(0, data.length)]["data"];
@@ -47,8 +54,12 @@ class Reddit {
         return content;
       }
     }
-    catch (JSONException e) {}
-    catch (CurlException e) {}
+    catch (JSONException e) {
+      warning("Reddit json decode failed: ", e);
+    }
+    catch (CurlException e) {
+      warning("Reddit http request failed: ", e);
+    }
 
     return "probably rate limited";
   }
