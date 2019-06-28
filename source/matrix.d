@@ -176,7 +176,8 @@ public:
         }
     }
 
-    void sendMessage(string message, string type = "m.text", string quoteText = "") {
+    void sendMessage(string message, string type = "m.text", string quoteText = "", bool isHtml = false) {
+        import std.array : replace;
         string url = this.buildUrl("rooms/%s/send/m.room.message/%d".format(this.roomID, this.txID));
         string data;
         if (quoteText.length > 0) {
@@ -186,6 +187,17 @@ public:
                 "format": "org.matrix.custom.html",
                 "formatted_body": "<blockquote>\n<p>%s</p>\n</blockquote>\n<p>%s</p>\n"
             }`.format(quoteText, message, type, quoteText, message);
+        } else if (isHtml) {
+            data = `{
+                "body": "get a proper client (html message)",
+                "msgtype": "%s",
+                "format": "org.matrix.custom.html",
+                "formatted_body": "%s"
+            }`.format(type, message.replace("\"", "&quot;")
+                                   .replace("\n", " ")
+                                   // lol
+                                   .replace("<p> &amp;#x200B; </p> ", "")
+                                   .replace("<p>&amp;#x200B; </p> ", ""));
         } else {
             data = `{
                 "body": "%s",

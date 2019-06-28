@@ -13,11 +13,13 @@ import plugins.utils : command;
 class Reddit {
   @command
   string reddit(ref Database db, const Message message, string t = "") {
-    import std.algorithm : canFind;
+    import std.algorithm : canFind, map;
     import std.array : join, split;
     import std.range : generate, take;
     import std.stdio : writeln;
     import std.uni : isWhite;
+
+    import dmarkdown : filterMarkdown, MarkdownFlags;
 
     string subreddit = message.text;
     if (subreddit.canFind(" ")) {
@@ -59,7 +61,14 @@ class Reddit {
         if (post["selftext"].str == "") {
           content = content_url;
         } else {
-          content = post["selftext"].str;
+          string self_text = post["selftext"].str
+              .split("\n")
+              .map!(s => "> " ~ s ~ "\n")
+              .join;
+
+          return "!!html " ~ (
+            "# " ~ post["title"].str ~ "\n" ~ self_text ~ "\n"
+          ).filterMarkdown(MarkdownFlags.forumDefault);
         }
 
         if (post["over_18"].boolean) {
@@ -68,7 +77,7 @@ class Reddit {
           return "!!image %s".format(content_url);
         }
 
-        return content;
+        return "!!html <strong>" ~ post["title"].str ~ "</strong><br />" ~ content;
       }
     }
     catch (JSONException e) {

@@ -84,6 +84,9 @@ void run(ref Matrix connection) {
                 if (response.length > 0) {
                     if (response.startsWith("!!image ")) {
                         connection.sendImage(response.stripLeft("!!image "));
+                    } else if (response.startsWith("!!html")) {
+                        connection.sendMessage(
+                            response.stripLeft("!!html "), "m.text", "", true);
                     } else {
                         connection.sendMessage(response, "m.text", quote);
                     }
