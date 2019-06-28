@@ -12,7 +12,7 @@ import plugins.utils : command;
 
 class Reddit {
   @command
-  string reddit(ref Database db, const Message message) {
+  string reddit(ref Database db, const Message message, string t = "") {
     import std.algorithm : canFind;
     import std.array : join, split;
     import std.range : generate, take;
@@ -26,6 +26,10 @@ class Reddit {
 
     string url = "https://reddit.com/r/%s.json".format(subreddit);
 
+    if (t != "") {
+      url = "%s?sort=top&t=%s".format(url, t);
+    }
+
     auto http = HTTP(url);
     string extra = generate(
         () => "abcdefghijklmnopqrstuvwxyz".split("").choice).take(8).join;
@@ -34,6 +38,11 @@ class Reddit {
     try {
       auto result = parseJSON(get(url, http));
       JSONValue[] data = result["data"]["children"].array;
+
+      if (data.length == 0) {
+        return reddit(db, message, "all");
+      }
+
       while (true) {
         auto post = data[uniform(0, data.length)]["data"];
         if (post["stickied"].boolean) {
