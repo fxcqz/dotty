@@ -102,7 +102,7 @@ public:
       import std.net.curl : CurlException, get;
 
       // https://stackoverflow.com/a/37704433/11793168
-      auto urlR = regex(r"^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$");
+      auto urlR = regex(r"((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?");
       auto match = text.matchFirst(urlR);
 
       if (!match.empty) {
