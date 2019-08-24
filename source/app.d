@@ -96,7 +96,12 @@ void run(ref Matrix connection) {
                 // these are more generic so pass in the Matrix connection instance
                 response = callNoPrompt(plugin, connection, message);
                 if (response.length > 0) {
-                    connection.sendMessage(response, "m.text", quote);
+                    if (response.startsWith("!!html")) {
+                        connection.sendMessage(
+                            response.stripLeft("!!html "), "m.text", "", true);
+                    } else {
+                        connection.sendMessage(response, "m.text", quote);
+                    }
                 }
             }
         }

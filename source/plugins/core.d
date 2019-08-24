@@ -94,6 +94,36 @@ public:
         return "";
     }
 
+    string pageTitle(string apiKey, string text) {
+      import std.algorithm.searching : startsWith;
+      import std.format : format;
+      import std.json : JSONException, parseJSON;
+      import std.regex : matchFirst, regex;
+      import std.net.curl : CurlException, get;
+
+      // https://stackoverflow.com/a/37704433/11793168
+      auto urlR = regex(r"^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$");
+      auto match = text.matchFirst(urlR);
+
+      if (!match.empty) {
+        try {
+          string url =
+            "https://www.googleapis.com/youtube/v3/videos?key=%s&part=snippet&id=%s".format(
+              apiKey, match[5]
+            );
+          auto response = parseJSON(get(url));
+          return "!!html <blockquote>\n<p>%s</p>\n</blockquote>\n<p>%s</p>\n".format(
+            text,
+            response["items"].array[0]["snippet"]["title"].str
+          );
+        } catch (JSONException e) {
+        } catch (CurlException e) {
+        }
+      }
+
+      return "";
+    }
+
     string noPrompt(ref Matrix connection, const ref Message message) {
         string howResponse = how(message.text);
         if (howResponse.length) {
@@ -103,6 +133,11 @@ public:
         string orResponse = or(message.text);
         if (orResponse.length) {
             return orResponse;
+        }
+
+        string titleResponse = pageTitle(connection.config.apiKeyGoogle, message.original);
+        if (titleResponse.length) {
+            return titleResponse;
         }
 
         // calculate the whether we're going to laugh before doing any looping

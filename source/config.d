@@ -16,6 +16,7 @@ public:
     string address;
     string room;
     string commandSymbol;
+    string apiKeyGoogle;
     string[] logIgnore;
 
     this(JSONValue config) {
@@ -25,6 +26,7 @@ public:
             this.address = config["address"].str;
             this.room = config["room"].str;
             this.commandSymbol = config["commandSymbol"].str;
+            this.apiKeyGoogle = config["keys"]["google"].str;
             this.logIgnore = config["logIgnore"].array.map!(s => s.str).array;
         } catch (JSONException e) {
             fatal("Could not read the config file!");

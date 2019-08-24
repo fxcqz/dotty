@@ -134,6 +134,7 @@ public:
                 foreach (event; events.array) {
                     if ("body" in event["content"]) {
                         result ~= Message(event["content"]["body"].str.toLower,
+                                          event["content"]["body"].str,
                                           event["sender"].str, event["event_id"].str);
                     }
                 }
@@ -188,16 +189,17 @@ public:
                 "formatted_body": "<blockquote>\n<p>%s</p>\n</blockquote>\n<p>%s</p>\n"
             }`.format(quoteText, message, type, quoteText, message);
         } else if (isHtml) {
+            message = message.replace("\"", "&quot;")
+                             .replace("\n", " ")
+                             .replace("<p> &amp;#x200B; </p> ", "")
+                             .replace("<p>&amp;#x200B; </p> ", "");
+
             data = `{
-                "body": "get a proper client (html message)",
+                "body": "%s",
                 "msgtype": "%s",
                 "format": "org.matrix.custom.html",
                 "formatted_body": "%s"
-            }`.format(type, message.replace("\"", "&quot;")
-                                   .replace("\n", " ")
-                                   // lol
-                                   .replace("<p> &amp;#x200B; </p> ", "")
-                                   .replace("<p>&amp;#x200B; </p> ", ""));
+            }`.format(message, type, message);
         } else {
             data = `{
                 "body": "%s",

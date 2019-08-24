@@ -5,6 +5,7 @@ import std.string : strip;
 public struct Message {
 public:
     string text;
+    string original;
     string sender;
     string eventID;
 
