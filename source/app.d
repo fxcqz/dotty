@@ -52,20 +52,22 @@ void run(ref Matrix connection) {
         }
 
         connection.markRead(messages[$ - 1]);
-        foreach (ref message; messages) {
+        foreach (i, ref message; messages) {
             if (message.sender == connection.getUserID()) {
                 // ignore our own messages
                 continue;
             }
 
             string quote;
-            if (messageCount > 1) {
+            if (messageCount > 1 && i != messageCount - 1) {
+                // only quote when multiple messages and current message isnt the last one
                 quote = message.text;
             }
 
             foreach(ref plugin; plugins) {
                 string response = callCommands(symbol, plugin, connection.db, message);
                 if (response.length > 0) {
+                    // @refactor handle message types in separate function
                     if (response.startsWith("!!image ")) {
                         connection.sendImage(response.stripLeft("!!image "));
                     } else if (response.startsWith("!!html")) {
