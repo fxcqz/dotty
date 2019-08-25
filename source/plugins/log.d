@@ -12,7 +12,6 @@ import message : Message;
 class Log {
 public:
   string noPrompt(ref Matrix connection, const ref Message message) {
-    import std.stdio : writeln;
     // only log messages from users we care about - see config.json
     // also, don't log explicit commands
     if (!connection.config.logIgnore.canFind(message.sender) &&
@@ -22,7 +21,7 @@ public:
       );
       query.bind(":sender", message.sender);
       query.bind(":room", connection.config.room);
-      query.bind(":message", message.text);
+      query.bind(":message", message.original);
       query.execute();
       query.reset();
       info("Logged message from: ", message.sender);
