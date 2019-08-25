@@ -47,25 +47,9 @@ void run(ref Matrix connection) {
         immutable size_t messageCount = messages.length;
 
         if (messageCount == 0) {
-            // cap the wait duration at 5 secs
-            if (waitDur < 5) {
-                iters += 1;
-
-                if (iters >= 500) {
-                    // 500 is an arbitrary amount but should generally take a
-                    // while to build up to in an active conversation
-                    waitDur += 1;
-                    iters = 0;
-                }
-            }
-
-            Thread.sleep(dur!"seconds"(waitDur));
+            Thread.sleep(dur!"seconds"(0));
             continue;
         }
-
-        // reset sleep duration vars
-        iters = 0;
-        waitDur = 0;
 
         connection.markRead(messages[$ - 1]);
         foreach (ref message; messages) {
