@@ -125,6 +125,11 @@ public:
     }
 
     string noPrompt(ref Matrix connection, const ref Message message) {
+        string titleResponse = pageTitle(connection.config.apiKeyGoogle, message.original);
+        if (titleResponse.length) {
+            return titleResponse;
+        }
+
         string howResponse = how(message.text);
         if (howResponse.length) {
             return howResponse;
@@ -133,11 +138,6 @@ public:
         string orResponse = or(message.text);
         if (orResponse.length) {
             return orResponse;
-        }
-
-        string titleResponse = pageTitle(connection.config.apiKeyGoogle, message.original);
-        if (titleResponse.length) {
-            return titleResponse;
         }
 
         // calculate the whether we're going to laugh before doing any looping
