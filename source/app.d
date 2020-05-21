@@ -12,8 +12,6 @@ import db : makeDB;
 import matrix : Matrix;
 import message : Message;
 
-import plugins.baga : Baga;
-import plugins.bash : Bash;
 import plugins.core : Core;
 import plugins.futurama : Futurama;
 import plugins.log : Log;
@@ -24,16 +22,11 @@ import plugins.quote : Quote;
 import plugins.utils : callCommands, callNoPrompt;
 
 
-extern(C) {
-    void NimMain();
-}
-
 void run(ref Matrix connection) {
     int waitDur = 0, iters = 0;
     immutable string symbol = connection.getSymbol();
     auto plugins = tuple(new Log(), new Core(), new Quote(), new Rate(),
-                         new Simpsons(), new Futurama(), new Bash(),
-                         new Baga(), new Reddit());
+                         new Simpsons(), new Futurama(), new Reddit());
 
     connection.login();
     connection.join();
@@ -95,7 +88,6 @@ void run(ref Matrix connection) {
 }
 
 void main() {
-    NimMain(); // init nim gc
     auto db = makeDB();
     Config config = new Config(readConfig("config.json"));
     Matrix connection = new Matrix(config, db);

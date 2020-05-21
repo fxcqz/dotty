@@ -130,10 +130,11 @@ public:
             return titleResponse;
         }
 
+        /* Disabled for being irritating and not contributing
         string howResponse = how(message.text);
         if (howResponse.length) {
             return howResponse;
-        }
+        }*/
 
         string orResponse = or(message.text);
         if (orResponse.length) {

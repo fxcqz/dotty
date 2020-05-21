@@ -2,7 +2,7 @@
 	"description": "Matrix Bot",
 	"license": "Apache-2.0",
 	"authors": [
-		"fxcqz"
+		"rinfz"
 	],
 	"copyright": "",
     "name": "dotty",
@@ -12,8 +12,5 @@
     "dependencies": {
         "d2sqlite3": "~>0.18.2",
         "dmarkdown": "~>0.3.0"
-    },
-    "sourceFiles": [
-      "libnimplug.a"
-    ]
+    }
 }
